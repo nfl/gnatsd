@@ -38,6 +38,8 @@ func main() {
 	flag.StringVar(&opts.Authorization, "auth", "", "Authorization token required for connection.")
 	flag.IntVar(&opts.HTTPPort, "m", 0, "HTTP Port for /varz, /connz endpoints.")
 	flag.IntVar(&opts.HTTPPort, "http_port", 0, "HTTP Port for /varz, /connz endpoints.")
+	flag.IntVar(&opts.WebSocketPort, "ws", 0, "HTTP Port for WebSocket connections.")
+	flag.IntVar(&opts.WebSocketPort, "websocket_port", 0, "HTTP Port for WebSocket connections.")
 	flag.StringVar(&configFile, "c", "", "Configuration file.")
 	flag.StringVar(&configFile, "config", "", "Configuration file.")
 	flag.StringVar(&opts.PidFile, "P", "", "File to store process pid.")

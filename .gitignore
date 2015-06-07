@@ -29,5 +29,8 @@ _testmain.go
 # Mac
 .DS_Store
 
+# IDEs
+.idea
+
 # bin
 gnatsd

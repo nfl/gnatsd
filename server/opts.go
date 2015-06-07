@@ -30,6 +30,7 @@ type Options struct {
 	PingInterval       time.Duration `json:"ping_interval"`
 	MaxPingsOut        int           `json:"ping_max"`
 	HTTPPort           int           `json:"http_port"`
+	WebSocketPort	   int           `json:"websocket_port"`
 	SslTimeout         float64       `json:"ssl_timeout"`
 	AuthTimeout        float64       `json:"auth_timeout"`
 	MaxControlLine     int           `json:"max_control_line"`

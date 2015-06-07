@@ -18,6 +18,8 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/apcera/gnatsd/sublist"
+
+	"github.com/gorilla/websocket"
 )
 
 // Info is the information sent to clients to help them understand information
@@ -52,7 +54,10 @@ type Server struct {
 	remotes  map[string]*client
 	done     chan bool
 	start    time.Time
-	http     net.Listener
+
+
+	adminHttp		net.Listener
+	webSocketHttp	net.Listener
 
 	routeListener net.Listener
 	routeInfo     Info
@@ -196,6 +201,10 @@ func (s *Server) Start() {
 		s.StartProfiler()
 	}
 
+	if s.opts.WebSocketPort != 0 {
+		s.StartWebSockets()
+	}
+
 	// Wait for clients.
 	s.AcceptLoop()
 }
@@ -242,10 +251,10 @@ func (s *Server) Shutdown() {
 	}
 
 	// Kick HTTP monitoring if its running
-	if s.http != nil {
+	if s.adminHttp != nil {
 		doneExpected++
-		s.http.Close()
-		s.http = nil
+		s.adminHttp.Close()
+		s.adminHttp = nil
 	}
 
 	// Release the solicited routes connect go routines.
@@ -363,10 +372,57 @@ func (s *Server) StartHTTPMonitoring() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	s.http = l
+	s.adminHttp = l
 
 	go func() {
-		srv.Serve(s.http)
+		srv.Serve(s.adminHttp)
+		srv.Handler = nil
+		s.done <- true
+	}()
+}
+
+func (s *Server) StartWebSockets() {
+	Noticef("Starting http monitor on port %d", s.opts.WebSocketPort)
+
+	hp := fmt.Sprintf("%s:%d", s.opts.Host, s.opts.WebSocketPort)
+
+	l, err := net.Listen("tcp", hp)
+	if err != nil {
+		Fatalf("Can't listen to the monitor port: %v", err)
+	}
+
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool { return true },
+	}
+
+	handler := func (w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			Noticef("Error upgrading: %v", err)
+			return
+		}
+
+		s.createClient(&websocketNetConnWrapper{conn})
+	}
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/", handler)
+
+	srv := &http.Server{
+		Addr:           hp,
+		Handler:        mux,
+		ReadTimeout:    2 * time.Second,
+		WriteTimeout:   2 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	s.webSocketHttp = l
+
+	go func() {
+		srv.Serve(s.webSocketHttp)
 		srv.Handler = nil
 		s.done <- true
 	}()
@@ -509,4 +565,58 @@ func (s *Server) Addr() net.Addr {
 		return nil
 	}
 	return s.listener.Addr()
+}
+
+type websocketNetConnWrapper struct {
+	conn *websocket.Conn
+}
+
+func (ws *websocketNetConnWrapper) Read(b []byte) (n int, err error) {
+	_, r, err := ws.conn.NextReader()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return r.Read(b)
+}
+
+func (ws *websocketNetConnWrapper) Write(b []byte) (n int, err error) {
+	err = ws.conn.WriteMessage(websocket.TextMessage, b)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return len(b), err
+}
+
+func (ws *websocketNetConnWrapper) Close() error {
+	return ws.conn.Close()
+}
+
+func (ws *websocketNetConnWrapper) LocalAddr() net.Addr {
+	return ws.conn.LocalAddr()
+}
+
+func (ws *websocketNetConnWrapper) RemoteAddr() net.Addr {
+	return ws.conn.RemoteAddr()
+}
+
+func (ws *websocketNetConnWrapper) SetDeadline(t time.Time) error {
+	err := ws.SetReadDeadline(t)
+
+	if err != nil {
+		return err
+	}
+
+	return ws.SetWriteDeadline(t)
+}
+
+func (ws *websocketNetConnWrapper) SetReadDeadline(t time.Time) error {
+	return ws.conn.SetReadDeadline(t)
+}
+
+func (ws *websocketNetConnWrapper) SetWriteDeadline(t time.Time) error {
+	return ws.conn.SetWriteDeadline(t)
 }
