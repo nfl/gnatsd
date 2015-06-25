@@ -382,13 +382,13 @@ func (s *Server) StartHTTPMonitoring() {
 }
 
 func (s *Server) StartWebSockets() {
-	Noticef("Starting http monitor on port %d", s.opts.WebSocketPort)
+	Noticef("Starting websocket server on port %d", s.opts.WebSocketPort)
 
 	hp := fmt.Sprintf("%s:%d", s.opts.Host, s.opts.WebSocketPort)
 
 	l, err := net.Listen("tcp", hp)
 	if err != nil {
-		Fatalf("Can't listen to the monitor port: %v", err)
+		Fatalf("Can't listen to the websocket port: %v", err)
 	}
 
 	upgrader := websocket.Upgrader{
