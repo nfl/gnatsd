@@ -198,6 +198,9 @@ func MergeOptions(fileOpts, flagOpts *Options) *Options {
 	if flagOpts.HTTPPort != 0 {
 		opts.HTTPPort = flagOpts.HTTPPort
 	}
+	if flagOpts.WebSocketPort != 0 {
+		opts.WebSocketPort = flagOpts.WebSocketPort
+	}
 	if flagOpts.Debug {
 		opts.Debug = true
 	}
