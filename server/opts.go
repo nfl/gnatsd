@@ -93,6 +93,8 @@ func ProcessConfigFile(configFile string) (*Options, error) {
 			opts.AuthTimeout = auth.timeout
 		case "http_port", "monitor_port":
 			opts.HTTPPort = int(v.(int64))
+		case "websocket_port":
+			opts.WebSocketPort = int(v.(int64))
 		case "cluster":
 			cm := v.(map[string]interface{})
 			if err := parseCluster(cm, opts); err != nil {
