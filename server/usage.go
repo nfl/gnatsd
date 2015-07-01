@@ -15,6 +15,7 @@ Server options:
     -m,  --http_port PORT             Use HTTP PORT
     -ws, --websocket_port PORT        Use PORT for WebSocket connections
     -c,  --config FILE                Configuration File
+    -cores CPUCORES                   Number of CPU Cores to Use
 
 Logging options:
     -l,  --log FILE                   File to redirect log output

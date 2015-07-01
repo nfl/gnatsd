@@ -6,22 +6,25 @@ import (
 	"flag"
 	"os"
 	"strings"
-
+	"runtime"
 	"github.com/apcera/gnatsd/auth"
 	"github.com/apcera/gnatsd/logger"
 	"github.com/apcera/gnatsd/server"
 )
 
 func main() {
+	
 	// Server Options
 	opts := server.Options{}
 
 	var showVersion bool
 	var debugAndTrace bool
 	var configFile string
+	var cpuCores int
 
 	// Parse flags
 	flag.IntVar(&opts.Port, "port", 0, "Port to listen on.")
+	flag.IntVar(&cpuCores, "cores", 1, "CPU Cores to use")
 	flag.IntVar(&opts.Port, "p", 0, "Port to listen on.")
 	flag.StringVar(&opts.Host, "addr", "", "Network host to listen on.")
 	flag.StringVar(&opts.Host, "a", "", "Network host to listen on.")
@@ -57,6 +60,8 @@ func main() {
 	flag.Usage = server.Usage
 
 	flag.Parse()
+
+	runtime.GOMAXPROCS(cpuCores)
 
 	// Show version and exit
 	if showVersion {

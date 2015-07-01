@@ -16,6 +16,8 @@ Server options:
     -P, --pid FILE                   File to store PID
     -m, --http_port PORT             Use HTTP PORT
     -c, --config FILE                Configuration File
+    -ws, --websocket_port PORT       Use PORT for WebSocket connections
+    -cores CPUCORES                  Number of CPU Cores to Use
 
 Logging options:
     -l, --log FILE                   File to redirect log output
@@ -114,6 +116,13 @@ There are several client language bindings for NATS.
 - [Java - Spring](https://github.com/mheath/jnats)
 - [Node.js](https://github.com/derekcollison/node_nats)
 - [Ruby](https://github.com/derekcollison/nats)
+
+## WebSocket Client
+In order to use websocket, the client must implement a PING/PONG based on natsd implmentation.
+Server will send PING message on a defined interval (DEFAULT is 2 minutes)
+After 2 (configurable) timeouts, server will disconnect the connection.
+Server PING message is of the form 'PING\r\n'
+WebSocket client must respond with 'PONG\n'
 
 
 ## License

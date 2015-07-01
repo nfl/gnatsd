@@ -787,9 +787,9 @@ func (c *client) processPingTimer() {
 	defer c.mu.Unlock()
 	c.ptmr = nil
 	// Check if we are ready yet..
-	if _, ok := c.nc.(*net.TCPConn); !ok {
-		return
-	}
+	//if _, ok := c.nc.(*net.TCPConn); !ok {
+	//	return
+	//}
 
 	c.Debugf("%s Ping Timer", c.typeString())
 
@@ -820,9 +820,15 @@ func (c *client) processPingTimer() {
 }
 
 func (c *client) setPingTimer() {
+
+	//USE pingInterval2 on stress test to spread out bulk ping/pong
+	//var pingSeconds = rand.Intn(120)
+	//var pingInterval2 = time.Duration(29 + pingSeconds) * time.Second
+
 	if c.srv == nil {
 		return
 	}
+	//d := pingInterval2
 	d := c.srv.opts.PingInterval
 	c.ptmr = time.AfterFunc(d, c.processPingTimer)
 }
