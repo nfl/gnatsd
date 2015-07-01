@@ -121,8 +121,8 @@ There are several client language bindings for NATS.
 In order to use websocket, the client must implement a PING/PONG based on natsd implmentation.
 Server will send PING message on a defined interval (DEFAULT is 2 minutes)
 After 2 (configurable) timeouts, server will disconnect the connection.
-Server PING message is of the form 'PING\r\n'
-WebSocket client must respond with 'PONG\n'
+Server PING message is of the form `'PING\r\n'`
+WebSocket client must respond with `'PONG\n'`
 
 
 ## License
