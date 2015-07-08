@@ -822,14 +822,14 @@ func (c *client) processPingTimer() {
 func (c *client) setPingTimer() {
 
 	//USE pingInterval2 on stress test to spread out bulk ping/pong
-	//var pingSeconds = rand.Intn(120)
-	//var pingInterval2 = time.Duration(29 + pingSeconds) * time.Second
+	var pingSeconds = rand.Intn(120)
+	var pingInterval2 = time.Duration(60 + pingSeconds) * time.Second
 
 	if c.srv == nil {
 		return
 	}
-	//d := pingInterval2
-	d := c.srv.opts.PingInterval
+	d := pingInterval2
+	//d := c.srv.opts.PingInterval
 	c.ptmr = time.AfterFunc(d, c.processPingTimer)
 }
 
