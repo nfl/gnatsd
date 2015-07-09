@@ -794,7 +794,7 @@ func (c *client) processPingTimer() {
 	c.Debugf("%s Ping Timer", c.typeString())
 
 	// Check for violation
-	c.pout += 1
+	//c.pout += 1
 	if c.pout > c.srv.opts.MaxPingsOut {
 		c.Debugf("Stale Client Connection - Closing")
 		if c.bw != nil {
