@@ -42,10 +42,10 @@ const (
 	AUTH_TIMEOUT = 2 * SSL_TIMEOUT
 
 	// DEFAULT_PING_INTERVAL is how often pings are sent to clients and routes.
-	DEFAULT_PING_INTERVAL = 2 * time.Minute
+	DEFAULT_PING_INTERVAL = 10 * time.Second
 
 	// DEFAULT_PING_MAX_OUT is maximum allowed pings outstanding before disconnect.
-	DEFAULT_PING_MAX_OUT = 3
+	DEFAULT_PING_MAX_OUT = 2
 
 	// CRLF string
 	CR_LF = "\r\n"
