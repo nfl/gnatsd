@@ -801,7 +801,7 @@ func (c *client) processPingTimer() {
 			c.bw.WriteString(fmt.Sprintf("-ERR '%s'\r\n", "Stale Connection"))
 			c.bw.Flush()
 		}
-		c.closeConnection()
+		c.clearConnection()
 		return
 	}
 
