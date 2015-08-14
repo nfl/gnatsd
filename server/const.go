@@ -45,7 +45,7 @@ const (
 	DEFAULT_PING_INTERVAL = 2 * time.Minute
 
 	// DEFAULT_PING_MAX_OUT is maximum allowed pings outstanding before disconnect.
-	DEFAULT_PING_MAX_OUT = 2
+	DEFAULT_PING_MAX_OUT = 3
 
 	// CRLF string
 	CR_LF = "\r\n"
